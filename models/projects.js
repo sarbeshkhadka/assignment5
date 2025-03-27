@@ -11,8 +11,24 @@ const sequelize = new Sequelize({
             require: true,
             rejectUnauthorized: false
         }
-    }
+    },
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    logging: false // Disable logging in production
 });
+
+// Test the connection
+sequelize.authenticate()
+    .then(() => {
+        console.log('Database connection established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
 
 const Project = sequelize.define('Project', {
     id: {

@@ -35,23 +35,33 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Initialize project data
 let isInitialized = false;
+let initializationPromise = null;
 
 async function ensureInitialized() {
   if (!isInitialized) {
-    try {
-      await projectData.initialize();
-      isInitialized = true;
-      console.log("Database initialized successfully");
-    } catch (err) {
-      console.error("Database initialization failed:", err);
-      throw err;
+    if (!initializationPromise) {
+      initializationPromise = projectData.initialize()
+        .then(() => {
+          isInitialized = true;
+          console.log("Database initialized successfully");
+        })
+        .catch((err) => {
+          console.error("Database initialization failed:", err);
+          isInitialized = false;
+          initializationPromise = null;
+          throw err;
+        });
     }
+    await initializationPromise;
   }
 }
 
 // Wrap all route handlers with error handling
 const asyncHandler = (fn) => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
+  Promise.resolve(fn(req, res, next)).catch((err) => {
+    console.error("Route handler error:", err);
+    next(err);
+  });
 };
 
 // Home Page
@@ -188,7 +198,7 @@ app.post("/solutions/projects/:id/edit", asyncHandler(async (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Global error handler:", err);
   res.status(500).render("error", { 
     message: "An error occurred while processing your request.",
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
