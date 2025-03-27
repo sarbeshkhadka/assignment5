@@ -1,16 +1,20 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
-    }
-  ],
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "framework": "nodejs",
   "routes": [
     {
       "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "PGHOST": "@pghost",
+    "PGDATABASE": "@pgdatabase",
+    "PGUSER": "@pguser",
+    "PGPASSWORD": "@pgpassword"
+  }
 }
