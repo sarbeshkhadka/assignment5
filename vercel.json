@@ -1,9 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "npm install --no-audit --no-fund && npm run vercel-build",
   "outputDirectory": ".",
-  "installCommand": "npm install",
+  "installCommand": "npm install --no-audit --no-fund --production=false",
   "framework": "nodejs",
+  "includeFiles": [
+    "public/**",
+    "views/**",
+    "models/**",
+    "modules/**",
+    "server.js",
+    "package.json",
+    "vercel.json"
+  ],
   "routes": [
     {
       "src": "/(.*)",
