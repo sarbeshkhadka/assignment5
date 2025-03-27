@@ -4,7 +4,9 @@
       {
         "src": "server.js",
         "use": "@vercel/node",
-        "config": { "includeFiles": ["dist/**"] }
+        "config": {
+          "includeFiles": ["dist/**", "public/**", "views/**"]
+        }
       }
     ],
     "routes": [
@@ -12,5 +14,12 @@
         "src": "/(.*)",
         "dest": "server.js"
       }
-    ]
+    ],
+    "env": {
+      "NODE_ENV": "production",
+      "PGHOST": "@pghost",
+      "PGDATABASE": "@pgdatabase",
+      "PGUSER": "@pguser",
+      "PGPASSWORD": "@pgpassword"
+    }
   }
